@@ -10,6 +10,14 @@ export class SpriteAnimator {
         this.bounceTime = 0;
         this.squashFactor = 1.0;
         this.stretchFactor = 1.0;
+        this.sprite = null;
+        this.loaded = false;
+    }
+
+    setSprite(path) {
+        this.sprite = new Image();
+        this.sprite.src = path;
+        this.sprite.onload = () => this.loaded = true;
     }
 
     update(dt) {
@@ -36,22 +44,21 @@ export class SpriteAnimator {
         ctx.translate(x, y + height);
         ctx.scale(this.squashFactor * this.owner.facing, this.stretchFactor);
         
-        // Simple shape if no sprite is loaded
-        ctx.fillStyle = '#332211';
-        ctx.fillRect(-width / 2, -height, width, height);
-        
-        // Draw Eyes (Classic Pac-man style)
-        ctx.fillStyle = '#fefefe';
-        ctx.beginPath();
-        ctx.arc(-5, -height+15, 6, 0, Math.PI*2);
-        ctx.arc(5, -height+15, 6, 0, Math.PI*2);
-        ctx.fill();
-        
-        ctx.fillStyle = '#000';
-        ctx.beginPath();
-        ctx.arc(-5, -height+15, 2, 0, Math.PI*2);
-        ctx.arc(5, -height+15, 2, 0, Math.PI*2);
-        ctx.fill();
+        if (this.loaded) {
+            // Draw the actual character sprite
+            ctx.drawImage(this.sprite, -width, -height*2, width*2, height*2);
+        } else {
+            // Fallback while loading
+            ctx.fillStyle = '#332211';
+            ctx.fillRect(-width / 2, -height, width, height);
+            
+            // Eyes
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(-5, -height+15, 6, 0, Math.PI*2);
+            ctx.arc(5, -height+15, 6, 0, Math.PI*2);
+            ctx.fill();
+        }
         
         ctx.restore();
     }

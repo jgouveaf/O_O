@@ -1,6 +1,7 @@
 import { Game } from './engine/Core.js';
 import { Player } from './game/Player.js';
 import { Enemy } from './game/Enemy.js';
+import { WhiskingWarlord } from './game/Boss.js';
 import { MusicManager } from './engine/MusicManager.js';
 
 // Initialize Game
@@ -10,12 +11,31 @@ const game = new Game('gameCanvas');
 game.music = new MusicManager(120);
 
 // Initialize Protagonist (Pothead / cabeza de bule)
-const pothead = new Player(100, 300);
+const pothead = new Player(100, 300, 'KETTLETON');
+pothead.animator.setSprite('assets/kettleton.png');
 game.addEntity(pothead);
+
+// HUD Character Selection Toggle
+let selectedChar = 'KETTLETON';
+let goldButtons = 100; // Starting gold for testing
+
+window.buy = (item, cost) => {
+    if (goldButtons >= cost) {
+        goldButtons -= cost;
+        document.getElementById('gold-count').innerText = `Botões: ${goldButtons}`;
+        if (item === 'speed') pothead.moveSpeed += 0.1;
+        if (item === 'reach') pothead.attackDamage += 5;
+        console.log(`Comprado: ${item}`);
+    }
+};
 
 // Initial Wave of Enemies (Corrupted Utensils)
 game.addEntity(new Enemy(600, 300, 'Garfo Corrompido'));
 game.addEntity(new Enemy(800, 300, 'Faca Amolada'));
+
+// --- BOSS ENCOUNTER: O BARÃO BATEDEIRA ---
+const boss = new WhiskingWarlord(1000, 300);
+game.addEntity(boss);
 
 // Phase Transition Visuals
 game.onPhaseChange = (phase) => {
@@ -43,6 +63,16 @@ class HUD {
     }
     update(dt) {}
     draw(ctx) {
+        // --- JAZZ BPM VISUALIZER ---
+        const beatFactor = game.music.getBeatFactor();
+        ctx.fillStyle = '#1a1a1a';
+        ctx.beginPath();
+        ctx.arc(880, 50, 20 + beatFactor * 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#f2e8d5';
+        ctx.font = 'bold 12px "Courier New"';
+        ctx.fillText('JAZZ', 863, 55);
+
         // Vintage Lifebar (Ink bottle style)
         ctx.fillStyle = '#000';
         ctx.font = 'bold 20px "Courier New"';
@@ -66,7 +96,36 @@ class HUD {
 
 game.addEntity(new HUD());
 
-// Start the game loop
-game.state = 'PLAYING';
+// Start Button Handler
+document.getElementById('start-btn').addEventListener('click', () => {
+    document.getElementById('menu-overlay').classList.add('hide');
+    
+    // Apply Selected Character
+    pothead.charType = selectedChar;
+    pothead.applyStats();
+    pothead.animator.setSprite(`assets/${selectedChar.toLowerCase()}.png`);
+    
+    game.state = 'PLAYING';
+    console.log("GAME START: Enjoy the beatdown!");
+});
 
-console.log("CHÁ DE PANCADA INITIALIZED: 1930s Beat 'em Up");
+// Shop Handlers
+document.querySelectorAll('.menu-btn').forEach(btn => {
+    if (btn.innerText === 'OPÇÕES') {
+        btn.innerText = 'LOJA DE BOTÕES';
+        btn.addEventListener('click', () => {
+            document.getElementById('shop-overlay').classList.remove('hide');
+            document.getElementById('shop-overlay').style.display = 'flex';
+        });
+    }
+});
+
+document.getElementById('close-shop').addEventListener('click', () => {
+    document.getElementById('shop-overlay').classList.add('hide');
+    document.getElementById('shop-overlay').style.display = 'none';
+});
+
+// Initial State (Menu view)
+game.state = 'START';
+
+console.log("CHÁ DE PANCADA READY: Waiting for player...");

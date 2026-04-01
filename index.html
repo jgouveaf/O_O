@@ -92,6 +92,138 @@
             50% { transform: translate(1px, -1px); }
             100% { transform: translate(-1px, 1px); }
         }
+
+        /* MENU STYLES */
+        #menu-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            color: #f2e8d5;
+            text-align: center;
+        }
+
+        h1.game-title {
+            font-size: 80px;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: #f2e8d5;
+            text-shadow: 4px 4px #000;
+            animation: title-bounce 1s infinite alternate ease-in-out;
+        }
+
+        @keyframes title-bounce {
+            from { transform: scale(1) rotate(-2deg); }
+            to { transform: scale(1.05) rotate(2deg); }
+        }
+
+        .menu-btn {
+            background: #f2e8d5;
+            color: #000;
+            padding: 15px 40px;
+            margin: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            border: 4px solid #000;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: transform 0.2s;
+            box-shadow: 6px 6px #000;
+        }
+
+        .menu-btn:hover {
+            transform: scale(1.1);
+            background: #fff;
+        }
+
+        .hide { display: none !important; }
+
+        /* IRIS OUT TRANSITION */
+        #iris-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+            pointer-events: none;
+            clip-path: circle(150% at 50% 50%);
+            transition: clip-path 2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #iris-overlay.active {
+            clip-path: circle(0% at 50% 50%);
+        }
+
+        #clear-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1001;
+            color: #f2e8d5;
+            font-size: 100px;
+            font-weight: bold;
+            text-shadow: 10px 10px #000;
+            animation: clear-bounce 1s infinite alternate;
+        }
+
+        /* SHOP STYLES (GOLD BUTTONS) */
+        #shop-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f2e8d5;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1002;
+            color: #000;
+            text-align: center;
+            border: 20px double #000;
+            box-sizing: border-box;
+            background-image: radial-gradient(#d4c6b0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .shop-item {
+            background: #fff;
+            padding: 10px;
+            margin: 5px;
+            border: 2px solid #000;
+            width: 300px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .buy-btn {
+            background: #e6b800; /* Gold Button color */
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border: 2px solid #000;
+            font-weight: bold;
+        }
+
+        .buy-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        @keyframes clear-bounce {
+            from { transform: translate(-50%, -50%) scale(1); }
+            to { transform: translate(-50%, -50%) scale(1.1); }
+        }
     </style>
 </head>
 <body>
@@ -100,6 +232,59 @@
         <div class="film-overlay"></div>
         <div class="grain"></div>
         <div class="vignette"></div>
+        <div id="iris-overlay"></div>
+
+        <!-- GOLD BUTTON SHOP -->
+        <div id="shop-overlay" class="hide">
+            <h2 style="font-size: 50px;">CATÁLOGO DE MELHORIAS</h2>
+            <p>Troque seus **Botões de Ouro** por poder!</p>
+            <h3 id="gold-count">Botões: 0</h3>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div class="shop-item">
+                    <span>Lança-Colher (+Alcance)</span>
+                    <button class="buy-btn" onclick="buy('reach', 10)">10B</button>
+                </div>
+                <div class="shop-item">
+                    <span>Chá Vicioso (Magia+)</span>
+                    <button class="buy-btn" onclick="buy('magic', 20)">20B</button>
+                </div>
+                <div class="shop-item">
+                    <span>Botas Elásticas (Velô+)</span>
+                    <button class="buy-btn" onclick="buy('speed', 15)">15B</button>
+                </div>
+            </div>
+            <button id="close-shop" class="menu-btn" style="margin-top: 20px;">SAIR DA LOJA</button>
+        </div>
+
+        <!-- STAGE CLEAR UI -->
+        <div id="clear-screen" class="hide">STAGE CLEAR!</div>
+
+        <!-- NEW MENU OVERLAY -->
+        <div id="menu-overlay">
+            <h1 class="game-title">CHÁ DE PANCADA</h1>
+            <p>Selecione seu herói e vá para a luta!</p>
+            
+            <div id="char-selector" style="display: flex; gap: 10px; margin: 20px; flex-wrap: wrap; justify-content: center;">
+                <div class="char-box selected" data-char="KETTLETON" style="cursor:pointer; border: 4px solid #fff; padding: 10px; flex: 1; min-width: 150px;">
+                    SIR KETTLETON (Bule)
+                </div>
+                <div class="char-box" data-char="CAL" style="cursor:pointer; border: 4px solid #000; padding: 10px; flex: 1; min-width: 150px;">
+                    CAL (Caldeirão)
+                </div>
+                <div class="char-box" data-char="TILLY" style="cursor:pointer; border: 4px solid #000; padding: 10px; flex: 1; min-width: 150px;">
+                    TILLY (Taça)
+                </div>
+                <div class="char-box" data-char="CHRONO" style="cursor:pointer; border: 4px solid #000; padding: 10px; flex: 1; min-width: 150px;">
+                    CHRONO (Relógio)
+                </div>
+            </div>
+
+            <button id="start-btn" class="menu-btn">JOGAR AGORA</button>
+            <button class="menu-btn">COPOLAÇÃO (COOP)</button>
+            <button class="menu-btn">OPÇÕES</button>
+            <br>
+            <small>[WASD] Move | [J,K] Ataca | [L] Parry | [U] Magia</small>
+        </div>
     </div>
     
     <script type="module" src="src/main.js"></script>
