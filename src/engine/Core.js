@@ -39,11 +39,10 @@ export class Game {
     }
 
     update(deltaTime) {
-        if (this.state === 'LEVEL_CLEAR') return;
-        
         // Always update camera for the menu pan effect
         this.camera.update(deltaTime);
 
+        if (this.state === 'LEVEL_CLEAR' || this.state === 'INTRO') return;
         if (this.state !== 'PLAYING') return;
         
         // Check for victory

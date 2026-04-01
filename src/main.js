@@ -127,7 +127,22 @@ document.getElementById('close-shop').addEventListener('click', () => {
     document.getElementById('shop-overlay').style.display = 'none';
 });
 
-// Initial State (Menu view)
-game.state = 'START';
+// --- INTRO TO MENU TRANSITION ---
+const skipIntro = () => {
+    const intro = document.getElementById('intro-overlay');
+    if (intro && !intro.classList.contains('hide')) {
+        intro.style.opacity = '0';
+        setTimeout(() => {
+            intro.classList.add('hide');
+            document.getElementById('menu-overlay').classList.remove('hide');
+            game.state = 'START';
+        }, 1000);
+    }
+};
 
-console.log("CHÁ DE PANCADA READY: Waiting for player...");
+window.addEventListener('keydown', skipIntro);
+window.addEventListener('mousedown', skipIntro);
+
+// Initial State (Intro)
+game.state = 'INTRO';
+console.log("CHÁ DE PANCADA READY: Intro Screen Active");
