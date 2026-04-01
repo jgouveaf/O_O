@@ -40,6 +40,10 @@ export class Game {
 
     update(deltaTime) {
         if (this.state === 'LEVEL_CLEAR') return;
+        
+        // Always update camera for the menu pan effect
+        this.camera.update(deltaTime);
+
         if (this.state !== 'PLAYING') return;
         
         // Check for victory
@@ -48,11 +52,9 @@ export class Game {
             this.victory();
         }
 
-        // Slow motion recovery
         if (this.timeScale < 1.0) this.timeScale += 0.005 * deltaTime;
         if (this.timeScale > 1.0) this.timeScale = 1.0;
         
-        this.camera.update(deltaTime);
         this.entities.forEach(entity => entity.update(deltaTime));
         
         // Simple Battle Collision (Beat 'em Up style)

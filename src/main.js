@@ -57,12 +57,15 @@ game.onPhaseChange = (phase) => {
 
 // HUD and Interface
 class HUD {
-    constructor() {
+    constructor(playerRef) {
         this.type = 'UI';
+        this.player = playerRef;
         this.x = 0; this.y = 0; this.w = 0; this.h = 0;
     }
     update(dt) {}
     draw(ctx) {
+        if (!this.player) return;
+        
         // --- JAZZ BPM VISUALIZER ---
         const beatFactor = game.music.getBeatFactor();
         ctx.fillStyle = '#1a1a1a';
@@ -73,28 +76,27 @@ class HUD {
         ctx.font = 'bold 12px "Courier New"';
         ctx.fillText('JAZZ', 863, 55);
 
-        // Vintage Lifebar (Ink bottle style)
+        // HP
         ctx.fillStyle = '#000';
         ctx.font = 'bold 20px "Courier New"';
-        ctx.fillText('HP: ' + pothead.hp, 20, 40);
+        ctx.fillText('HP: ' + this.player.hp, 20, 40);
         
-        ctx.fillStyle = '#4e2a00'; // Dark Coffee Ink
-        ctx.fillRect(20, 50, pothead.ink * 2, 20);
+        // Ink
+        ctx.fillStyle = '#4e2a00';
+        ctx.fillRect(20, 50, this.player.ink * 2, 20);
         ctx.strokeStyle = '#000';
-        ctx.lineWidth = 2;
         ctx.strokeRect(20, 50, 200, 20);
-        ctx.fillText('INK (Magia): ' + Math.floor(pothead.ink), 20, 90);
         
-        // Combo Count (Rubber hose style bouncy text)
-        if (pothead.comboCounter > 1) {
+        // Combo
+        if (this.player.comboCounter > 1) {
             ctx.fillStyle = '#f00';
             ctx.font = (30 + Math.sin(Date.now()*0.01)*10) + 'px "Courier New"';
-            ctx.fillText(pothead.comboCounter + ' COMBO!', 400, 100);
+            ctx.fillText(this.player.comboCounter + ' COMBO!', 400, 100);
         }
     }
 }
 
-game.addEntity(new HUD());
+game.addEntity(new HUD(pothead));
 
 // Start Button Handler
 document.getElementById('start-btn').addEventListener('click', () => {
