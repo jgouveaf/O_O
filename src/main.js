@@ -12,7 +12,7 @@ game.music = new MusicManager(120);
 
 // Initialize Protagonist (Pothead / cabeza de bule)
 const pothead = new Player(100, 300, 'KETTLETON');
-pothead.animator.setSprite('assets/kettleton.png');
+pothead.animator.setSprite('kettleton.png');
 game.addEntity(pothead);
 
 // HUD Character Selection Toggle
@@ -103,7 +103,7 @@ document.getElementById('start-btn').addEventListener('click', () => {
     // Apply Selected Character
     pothead.charType = selectedChar;
     pothead.applyStats();
-    pothead.animator.setSprite(`assets/${selectedChar.toLowerCase()}.png`);
+    pothead.animator.setSprite(`${selectedChar.toLowerCase()}.png`);
     
     game.state = 'PLAYING';
     console.log("GAME START: Enjoy the beatdown!");

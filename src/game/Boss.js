@@ -8,7 +8,7 @@ export class WhiskingWarlord extends Enemy {
         this.w = 120;
         this.h = 160;
         this.phase = 1;
-        this.animator.setSprite('assets/boss1.png'); // Placeholder
+        this.animator.setSprite('boss1.png'); // Root
     }
 
     update(dt) {
